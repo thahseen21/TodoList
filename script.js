@@ -3,16 +3,17 @@ var todoList = [];
 function AddTodo() {
     const value = document.getElementById("add-todo").value;
 
-    let allRemoved = true;
-    for (let todo of todoList) {
-        if (!todo.isRemoved) {
-            allRemoved = false
-        }
-    }
-    if (todoList.length === 0 || allRemoved) {
-        ToggleNoTodo()
-    }
+
     if (value) {
+        let allRemoved = true;
+        for (let todo of todoList) {
+            if (!todo.isRemoved) {
+                allRemoved = false
+            }
+        }
+        if (todoList.length === 0 || allRemoved) {
+            ToggleNoTodo()
+        }
         let temp = { value: value, isRead: false, isRemoved: false }
         todoList.push(temp)
         Display();
@@ -52,12 +53,11 @@ function RemoveTodo(id) {
                 allRemoved = false
             }
         }
+        if (allRemoved) {
+            ToggleNoTodo();
+        }
     } else {
         alert("Please finish the task to remove...")
-    }
-
-    if (allRemoved) {
-        ToggleNoTodo();
     }
 }
 
