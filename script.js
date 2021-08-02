@@ -6,7 +6,7 @@ function AddTodo() {
         ToggleNoTodo()
     }
     if (value) {
-        let temp = { value: value, isRead: false }
+        let temp = { value: value, isRead: false, isRemoved: false }
         todoList.push(temp)
         Display();
         document.getElementById("add-todo").value = null;
@@ -35,13 +35,21 @@ function Display() {
 
 function RemoveTodo(id) {
     if (todoList[id].isRead) {
-        todoList.splice(id, 1)
         let tag = document.getElementById(id);
-        tag.remove();
+        todoList[id].isRemoved = true
+        tag.style.display = 'none';
+
+        var allRemoved = true;
+        for (var todo of todoList) {
+            if (!todo.isRemoved) {
+                allRemoved = false
+            }
+        }
     } else {
         alert("Please finish the task to remove...")
     }
-    if (todoList.length == 0) {
+
+    if (allRemoved) {
         ToggleNoTodo();
     }
 }
