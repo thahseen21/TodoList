@@ -14,14 +14,19 @@
       rel="stylesheet"
     />
   </head>
-  <body>
-    <h1>Todo's</h1>
-    <div class="search-bar">
-      <input id="add-todo" />
-      <button onclick="AddTodo()">add</button>
+  <body onload="GetListFromLocalStorage()">
+    <div class="todo-container">
+      <h1>Todo's</h1>
+      <div class="search-bar">
+        <input id="add-todo" />
+        <button onclick="AddTodo()">add</button>
+      </div>
+      <div id="list-container">
+        <p id="empty-todo" class="no-todo">
+          You have nothing in your todo list
+        </p>
+      </div>
     </div>
-    <div id="list-container">
-      <p id="empty-todo" class="no-todo">You have nothing in your todo list</p>
-    </div>
+    <button onclick="GetListFromLocalStorage()">get data</button>
   </body>
 </html>
