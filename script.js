@@ -18,27 +18,33 @@ function AddTodo() {
         todoList.push(temp)
         Display();
         document.getElementById("add-todo").value = null;
+    } else {
+        alert('Please enter a todo');
     }
 }
 
 function Display() {
     const p = document.createElement("p"); // creating a html element as <p> tag
-    p.className = `todo` // setting the <p> with a classname as 'todo'
-    p.id = `${todoList.length - 1}`
+    p.id = `todo-name-${todoList.length - 1}`
+
+    const container = document.createElement("div"); // creating a html element as <p> tag
+    container.className = `todo` // setting the <p> with a classname as 'todo'
+    container.id = `${todoList.length - 1}`
 
     const removeBtn = document.createElement("button");
     removeBtn.textContent = 'X';
-    removeBtn.addEventListener('click', () => RemoveTodo(p.id))
+    removeBtn.addEventListener('click', () => RemoveTodo(container.id))
 
     const node = document.createTextNode(todoList[todoList.length - 1].value); // creating a text
 
     p.appendChild(node); // adding the text to the <p>
-    p.appendChild(removeBtn); // adding the text to the <p>
-    // p.addEventListener('click', RemoveTodo);
-    p.addEventListener('dblclick', () => MarkReadToggler(p.id));
+    container.appendChild(p);
+    container.appendChild(removeBtn); // adding the text to the <p>
+
+    container.addEventListener('dblclick', () => MarkReadToggler(container.id));
 
     const element = document.getElementById("list-container"); // getting where to insert the <p> tag
-    element.append(p);// appending p tag as child to the "list-container" id.
+    element.append(container);// appending p tag as child to the "list-container" id.
 }
 
 function RemoveTodo(id) {
@@ -72,9 +78,10 @@ function ToggleNoTodo() {
 
 function MarkReadToggler(id) {
     todoList[id].isRead = !todoList[id].isRead;
+    const todo = document.getElementById(id)
     if (todoList[id].isRead) {
-        document.getElementById(id).style.textDecoration = 'line-through'
+        document.getElementById(`todo-name-${id}`).style.textDecoration = 'line-through'
     } else {
-        document.getElementById(id).style.textDecoration = 'none'
+        document.getElementById(`todo-name-${id}`).style.textDecoration = 'none'
     }
 }
