@@ -3,13 +3,12 @@ var todoList = [];
 let keyRef = 0;
 
 function AddTodo() {
-    const value = document.getElementById("add-todo").value;
 
-
-    if (value) {
-        let temp = { value: value, isRead: false, isRemoved: false }
+    const inputValue = document.getElementById("add-todo").value;
+    if (inputValue) {
+        let temp = { value: inputValue, isRead: false, key: keyRef }
         todoList.push(temp)
-        AddElementToHTML();
+        AddElementToHTML(inputValue);
         document.getElementById("add-todo").value = null;
         updateLocalStorage();
         ToggleNoTodo()
@@ -18,44 +17,34 @@ function AddTodo() {
     }
 }
 
-function AddElementToHTML(todo = null) {
-    const p = document.createElement("p"); // creating a html element as <p> tag
-    p.id = `todo-name-${keyRef}`
+function AddElementToHTML(data, todo = null) {
+    const todoWrapper = document.getElementById("list-container");
 
-    const container = document.createElement("div"); // creating a html element as <p> tag
-    container.className = `todo` // setting the <p> with a classname as 'todo'
-    container.id = `${keyRef}`
+    const newTodo = `<div class="todo" id="todo-${keyRef}"}>
+    <input type="checkbox" onclick="MarkReadToggler(${keyRef})" >
+    <p id="todo-name-${keyRef}">${data}</p>
+    <button onclick="RemoveTodo(${keyRef})">X</button>
+    </div>`;
 
-    const removeBtn = document.createElement("button");
-    removeBtn.textContent = 'X';
-    removeBtn.addEventListener('click', () => RemoveTodo(container.id))
-
-    const node = document.createTextNode(todo?.value ?? todoList[todoList.length - 1].value); // creating a text
-
-    p.appendChild(node); // adding the text to the <p>
-    container.appendChild(p);
-    container.appendChild(removeBtn); // adding the text to the <p>
-
-    container.addEventListener('dblclick', () => MarkReadToggler(container.id));
-
-    const element = document.getElementById("list-container"); // getting where to insert the <p> tag
-    element.append(container);// appending p tag as child to the "list-container" id.
+    todoWrapper.insertAdjacentHTML("beforeend", newTodo);
     keyRef++;
 }
 
-function RemoveTodo(id) {
-    let tag = document.getElementById(id);
-    var todo = todoList.filter(todo => todo.value === tag.getElementsByTagName('p')[0].innerText)
-    if (todo[0].isRead) {
+function RemoveTodo(key) {
+    if (todoList.filter(todo => todo.key === key)[0].isRead) {
+        //removing the html element
+        const toBeRemovedTag = document.getElementById(`todo-${key}`);
+        toBeRemovedTag.remove();
 
-        todoList = todoList.filter(todo => todo.value !== tag.getElementsByTagName('p')[0].innerText)
-        tag.style.display = 'none';
-
-        tag.remove();
-        updateLocalStorage();
+        //to remove the element from the list
+        todoList = todoList.filter(todo => todo.key !== key)
+        console.log(todoList)
         ToggleNoTodo();
+
+        //to remove from the localStorage
+        updateLocalStorage(); 
     } else {
-        alert("Please finish the task to remove...")
+        alert('Please complete the task to remove it')
     }
 }
 
@@ -68,15 +57,8 @@ function ToggleNoTodo() {
     }
 }
 
-function MarkReadToggler(id) {
-    let tag = document.getElementById(id);
-    let todo = todoList.filter(todo => todo.value === tag.getElementsByTagName('p')[0].innerText)
-    todo[0].isRead = !todo[0].isRead;
-    if (todo[0].isRead) {
-        document.getElementById(`todo-name-${id}`).style.textDecoration = 'line-through'
-    } else {
-        document.getElementById(`todo-name-${id}`).style.textDecoration = 'none'
-    }
+function MarkReadToggler(key) {
+    todoList.filter(todo => { if (todo.key === key) { todo.isRead = !todo.isRead } })
 }
 
 function GetListFromLocalStorage() {
@@ -84,7 +66,7 @@ function GetListFromLocalStorage() {
     if (data) {
         todoList = JSON.parse(data);
         for (let todo of todoList) {
-            AddElementToHTML(todo);
+            AddElementToHTML(todo.value);
         }
         ToggleNoTodo();
     } else {
